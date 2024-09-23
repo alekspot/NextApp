@@ -1,0 +1,93 @@
+version: "3.9"
+
+services:
+  keycloak-database:
+    container_name: keycloak-database
+    image: postgres:16
+    restart: always
+    volumes:
+      - /home/volums/keycloak/db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    network_mode: host
+    command: -p 5433
+
+  keycloak-server:
+    container_name: keycloak-server
+    image: quay.io/keycloak/keycloak:18.0.2
+    command:
+      - -v start 
+      - --import-realm
+      - --auto-build 
+      # - --log-level=DEBUG 
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: 2461348-xj88721.twc1.net
+      KC_HOSTNAME_ADMIN_URL: https://2461348-xj88721.twc1.net:8443
+      KC_HOSTNAME_PORT: 8443
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_DB: postgres 
+      KC_DB_URL_DATABASE: postgres
+      KC_DB_URL_HOST: 2461348-xj88721.twc1.net 
+      KC_DB_URL_PORT: 5433
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_DB_SCHEMA: public
+      KC_HTTPS_CERTIFICATE_FILE: /var/lib/keycloak/ssl/timeweb.cer
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /var/lib/keycloak/ssl/timeweb.pkcs8
+    restart: always
+    depends_on:
+      - keycloak-database
+    volumes:
+      - ./mount/ssl:/var/lib/keycloak/ssl
+      - ./mount/keycloak/realm:/opt/keycloak/data/import
+      - ./mount/keycloak/themes/keywind/:/opt/keycloak/providers
+    network_mode: host
+
+  bff:
+    container_name: bff
+    build: ../bff
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=vps
+      - KEYCLOAK_SECRET=AyQ4okGd41NzmXImDvbexYbHqScBw5Z2
+    network_mode: host
+
+  database:
+    container_name: database
+    image: postgres:16
+    restart: always
+    volumes:
+      - /home/volums/database/data:/var/lib/postgresql/data
+      - ./mount/database/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    network_mode: host
+    command: -p 5434
+
+  backend:
+    container_name: backend
+    build: ../backend
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=vps
+      - KEYCLOAK_SECRET=INELDFSBnUWuaBZDObMiBMOdwV4SxC3L
+    depends_on:
+    - database
+    network_mode: host
+
+  frontend:
+    container_name: frontend
+    build: ../frontend
+    command: npm run start:prod
+    restart: on-failure
+    depends_on:
+    - keycloak-server
+    network_mode: host
+

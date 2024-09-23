@@ -1,0 +1,6 @@
+{
+  "ext": ".ts, .js, .yaml",
+  "execMap": {
+    "ts": "node --env-file .env --require ts-node/register"
+  }
+}

@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+
+  ssodb:
+    container_name: keycloak-database
+    image: postgres:16
+    restart: always
+    ports:
+      - "3333:5432"
+    volumes:
+      - ./mount/keycloak/db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  keycloak:
+    image: "playaru/keycloak-russian:24.0.1"
+    restart: always
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+      - "8443:8443"
+    container_name: "keycloak"
+    depends_on:
+      - "ssodb"
+    environment:
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "admin"
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://ssodb/postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_PROXY: edge
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_RELATIVE_PATH: "/auth"
+      KC_HTTPS_CERTIFICATE_FILE: /var/lib/keycloak/ssl/docker.cer
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /var/lib/keycloak/ssl/docker.p8.pem
+    volumes:
+      # - ./mount/keycloak/data:/opt/keycloak/data/import
+      - ./mount/ssl:/var/lib/keycloak/ssl
+    command:
+      - "start"
+      # - "--import-realm"
+    logging:
+      options:
+        max-size: "1m"

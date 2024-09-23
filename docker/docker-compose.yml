@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  keycloak-database:
+    container_name: keycloak-database
+    image: postgres:16
+    restart: always
+    ports:
+      - "3333:5432"
+    volumes:
+      - ./mount/keycloak/db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  keycloak-server:
+    container_name: keycloak-server
+    image: quay.io/keycloak/keycloak:18.0.2
+    command:
+      - -v start 
+      - --import-realm
+      - --auto-build
+      # - --log-level=DEBUG 
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8443
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_DB: postgres 
+      KC_DB_URL_DATABASE: postgres
+      KC_DB_URL_HOST: keycloak-database 
+      KC_DB_URL_PORT: 5432
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_DB_SCHEMA: public
+      # Настройка https
+      KC_HTTPS_CERTIFICATE_FILE: /var/lib/keycloak/ssl/docker.cer
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /var/lib/keycloak/ssl/docker.p8.pem
+    restart: always
+    ports:
+      - "8443:8443"
+    depends_on:
+      - keycloak-database
+    volumes:
+      - ./mount/ssl:/var/lib/keycloak/ssl
+      - ./mount/keycloak/realm:/opt/keycloak/data/import
+      - ./mount/keycloak/themes/keywind/:/opt/keycloak/providers
+      
+  database:
+    container_name: database
+    image: postgres:16
+    restart: always
+    ports:
+      - "4444:5432"
+    volumes:
+      - ./mount/database/data:/var/lib/postgresql/data
+      - ./mount/database/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+
