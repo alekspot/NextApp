@@ -9,7 +9,7 @@ services:
     ports:
       - "3333:5432"
     volumes:
-      - ./mount/keycloak/db/data:/var/lib/postgresql/data
+      - ./docker/keycloak/db/data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -39,11 +39,12 @@ services:
       KC_HTTPS_CERTIFICATE_FILE: /var/lib/keycloak/ssl/docker.cer
       KC_HTTPS_CERTIFICATE_KEY_FILE: /var/lib/keycloak/ssl/docker.p8.pem
     volumes:
-      # - ./mount/keycloak/data:/opt/keycloak/data/import
-      - ./mount/ssl:/var/lib/keycloak/ssl
+      - ./docker/keycloak/data:/opt/keycloak/data/import
+      - ./docker/ssl:/var/lib/keycloak/ssl
+      - ./docker/keycloak/providers:/opt/keycloak/providers
     command:
       - "start"
-      # - "--import-realm"
+      - "--import-realm"
     logging:
       options:
         max-size: "1m"
