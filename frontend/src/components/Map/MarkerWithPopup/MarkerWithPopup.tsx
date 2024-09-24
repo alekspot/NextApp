@@ -6,6 +6,8 @@ import type { Place } from '../../../types/place';
 import getPopupPosition from '../helpers/get-popup-position';
 import { ReactifyApi } from '@/providers/YMapProvider';
 import styles from './MarkerWithPopup.module.scss';
+import { Image } from '@chakra-ui/react';
+import Link from 'next/link';
 
 interface MarkerWithPopupProps {
   mapRef: React.MutableRefObject<(YMap & { container: HTMLElement }) | null>;
@@ -64,15 +66,19 @@ const MarkerWithPopup = ({
         // onMouseLeave={() => selectPlace(null)}
         className={styles.marker}
       >
-        {place.label}
+        <Image src="/icons/1.png" alt="" width={30} height={30} />
+        {/* {place.label} */}
+        <div className="">Категория</div>
         {/* <div ref={markerRef} className={styles.marker}>
           <div className={styles.bg}>{place.label}</div>
         </div> */}
         {selected ? (
           <div ref={popupRef} className={styles.popup} style={{ ...position }}>
-            <div className="bg-slate-700 text-slate-300 min-w-[320px] p-4 rounded-lg text-sm shadow w-full h-full">
-              <div className="text-lg text-white">{place.label}</div>
-              <div className="text-sm">{place.text}</div>
+            <div>
+              <Link href="/event/1">Название</Link>
+
+              <div className="">Организатор</div>
+              <div className="">Когда</div>
             </div>
           </div>
         ) : null}

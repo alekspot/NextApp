@@ -1,0 +1,24 @@
+.page {
+    width: 940px;
+    margin: 0 auto;
+}
+
+.title {
+
+}
+
+.images {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 50px;
+    gap: 20px;
+}
+
+
+.img {
+    transition: transform 0.3s ease; /* Плавный переход */
+  }
+  
+  .img:hover {
+    transform: scale(1.2); /* Увеличение изображения на 20% */
+  }

@@ -6,7 +6,11 @@ import { ReactQueryClientProvider } from '@/providers/ReactQueryProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { Header } from '@/components/Header/Header';
 import styles from './layout.module.scss';
-import { cn } from '@/helpers/classnames';
+import cn from 'classnames';
+import { Providers } from '@/providers/Providers';
+import { Button } from '@chakra-ui/react';
+import Link from 'next/link';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,17 +25,22 @@ type Props = {
 
 export default function RootLayout({ children }: Props) {
   return (
-    <ReactQueryClientProvider>
-      <AuthProvider>
-        <html lang="ru">
-          <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <html lang="ru">
+      <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
 
-          <body className={cn(inter.className, styles.body)}>
+      <body className={cn(inter.className, styles.body)}>
+        <Providers>
+          <AntdRegistry>
             <Header />
             {children}
-          </body>
-        </html>
-      </AuthProvider>
-    </ReactQueryClientProvider>
+            <Link href="/event/create">
+              <Button colorScheme="orange" size={'lg'} className={styles.btn}>
+                Создать событие!
+              </Button>
+            </Link>
+          </AntdRegistry>
+        </Providers>
+      </body>
+    </html>
   );
 }
