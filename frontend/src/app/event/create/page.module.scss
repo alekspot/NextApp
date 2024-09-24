@@ -1,0 +1,56 @@
+.page {
+    width: 940px;
+    height: 80%;
+    margin: 50px auto;
+    background: rgb(255, 220, 171, 0.6);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    text-align: center;
+    padding: 20px 0px;
+    font-size: 22px;
+}
+
+.el {
+    padding: 20px 50px;
+}
+
+.input{
+    border: solid 2px #dd6b20 !important;
+    box-shadow: none !important;
+    border-radius: 20px !important;
+    background: white;
+}
+
+.inputPlace {
+    border: solid 2px #dd6b20 !important;
+    box-shadow: none !important;
+    border-radius: 20px 0px 0px 20px !important;
+}
+
+.place{
+    display: flex;
+    align-items: flex-end;
+}
+
+.date {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.text {
+    margin-left: 20px;
+}
+
+.item {
+    flex: 1;
+}
+
+.btnCreate {
+    margin-top: auto;
+    text-align: center;
+}

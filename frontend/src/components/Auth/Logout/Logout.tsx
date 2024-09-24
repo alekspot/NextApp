@@ -1,8 +1,7 @@
 'use client';
-
 import { logout } from '@/auth/auth';
-import { Button } from '@/components/Button/Button';
 import { useLogoutAction } from '@/providers/AuthProvider';
+import { Button } from '@chakra-ui/react';
 
 export const Logout = () => {
   const logoutAction = useLogoutAction();
